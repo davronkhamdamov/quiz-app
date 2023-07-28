@@ -30,7 +30,7 @@ export class AuthService {
       return new ConflictException('User already exist');
     }
     const payload = {
-      id: user.isGoogleAuth ? user.id : null,
+      id: user.isGoogleAuth && user.id,
       username: user.username,
       email: user.email,
       password: user.isGoogleAuth
@@ -40,8 +40,8 @@ export class AuthService {
         ? user.photo
         : 'https://res.cloudinary.com/didddubfm/image/upload/v1685111301/585e4bf3cb11b227491c339a_u83hf7.png',
     };
-    await this.authRepo.register(payload);
-    return { access_token: await this.jwtService.signAsync({ id: user.id }) };
+    const id = await this.authRepo.register(payload);
+    return { access_token: await this.jwtService.signAsync({ id: id[0].id }) };
   }
 
   async login(user: ILoginUser) {

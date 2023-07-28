@@ -17,10 +17,8 @@ export class AuthRepository {
   }
   async register(user: IRegisterUser) {
     const knex = this.knexConfig.instance;
-    await knex('users').insert(user);
-    return {
-      message: 'User Successfully registered',
-    };
+    const newUser = await knex('users').insert(user).returning('id');
+    return newUser;
   }
   login(user: ILoginUser) {
     const knex = this.knexConfig.instance;
